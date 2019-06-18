@@ -34,6 +34,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.brstory.colorpicker.R;
+
 import java.util.Locale;
 
 public class ColorPickerDialog
@@ -96,7 +98,7 @@ public class ColorPickerDialog
         mOrientation = getContext().getResources().getConfiguration().orientation;
         setContentView(mLayout);
 
-        setTitle(R.string.dialog_color_picker);
+        setTitle("颜色选择");
 
         mColorPicker = (ColorPickerView) mLayout.findViewById(R.id.color_picker_view);
         mOldColor = (ColorPickerPanelView) mLayout.findViewById(R.id.old_color_panel);

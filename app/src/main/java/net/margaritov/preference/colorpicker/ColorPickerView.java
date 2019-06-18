@@ -276,19 +276,20 @@ public class ColorPickerView extends View {
         }
 
         if (mHueShader == null) {
-            mHueShader = new LinearGradient(rect.left, rect.top, rect.left, rect.bottom, buildHueColorArray(), null, TileMode.CLAMP);
+            mHueShader = new LinearGradient(rect.left, rect.left, rect.top, rect.bottom, buildHueColorArray(), null, TileMode.CLAMP);
             mHuePaint.setShader(mHueShader);
         }
 
         canvas.drawRect(rect, mHuePaint);
 
-        float rectHeight = 4 * mDensity / 2;
+//        float rectHeight = 4 * mDensity / 2;
+        float rectHeight = (rect.bottom-rect.top)/2;
 
         Point p = hueToPoint(mHue);
 
         RectF r = new RectF();
-        r.left = rect.left - RECTANGLE_TRACKER_OFFSET;
-        r.right = rect.right + RECTANGLE_TRACKER_OFFSET;
+        r.left = p.x-rect.left;
+        r.right = r.left+ 10;
         r.top = p.y - rectHeight;
         r.bottom = p.y + rectHeight;
 
@@ -350,11 +351,15 @@ public class ColorPickerView extends View {
 
         final RectF rect = mHueRect;
         final float height = rect.height();
+        final float width = rect.width();
 
         Point p = new Point();
+//
+//        p.y = (int) (height - (hue * height / 360f) + rect.top);
+//        p.x = (int) rect.left;
 
-        p.y = (int) (height - (hue * height / 360f) + rect.top);
-        p.x = (int) rect.left;
+        p.y = (int) ( rect.top+rect.bottom)/2;
+        p.x = (int) ((int) rect.left+(width - (hue * width / 360f)));
 
         return p;
     }
@@ -418,21 +423,21 @@ public class ColorPickerView extends View {
         return result;
     }
 
-    private float pointToHue(float y) {
+    private float pointToHue(float x) {
 
         final RectF rect = mHueRect;
 
-        float height = rect.height();
+        float width = rect.width();
 
-        if (y < rect.top) {
-            y = 0f;
-        } else if (y > rect.bottom) {
-            y = height;
+        if (x < rect.left) {
+            x = 0f;
+        } else if (x > rect.right) {
+            x = width;
         } else {
-            y = y - rect.top;
+            x = x - rect.left;
         }
 
-        return 360f - (y * 360f / height);
+        return 360f - (x * 360f / width);
     }
 
     private int pointToAlpha(int x) {
@@ -607,7 +612,7 @@ public class ColorPickerView extends View {
         if (mHueRect.contains(startX, startY)) {
             mLastTouchedPanel = PANEL_HUE;
 
-            mHue = pointToHue(event.getY());
+            mHue = pointToHue(event.getX());
 
             update = true;
         } else if (mSatValRect.contains(startX, startY)) {
@@ -728,7 +733,7 @@ public class ColorPickerView extends View {
 
         setUpSatValRect();
         setUpHueRect();
-        setUpAlphaRect();
+//        setUpAlphaRect();
     }
 
     private void setUpSatValRect() {
@@ -751,9 +756,15 @@ public class ColorPickerView extends View {
     private void setUpHueRect() {
         final RectF dRect = mDrawingRect;
 
-        float left = dRect.right - HUE_PANEL_WIDTH + BORDER_WIDTH_PX;
-        float top = dRect.top + BORDER_WIDTH_PX;
-        float bottom = dRect.bottom - BORDER_WIDTH_PX - (mShowAlphaPanel ? (PANEL_SPACING + ALPHA_PANEL_HEIGHT) : 0);
+//        float left = dRect.right - HUE_PANEL_WIDTH + BORDER_WIDTH_PX;
+//        float top = dRect.top + BORDER_WIDTH_PX;
+//        float bottom = dRect.bottom - BORDER_WIDTH_PX - (mShowAlphaPanel ? (PANEL_SPACING + ALPHA_PANEL_HEIGHT) : 0);
+//        float right = dRect.right - BORDER_WIDTH_PX;
+
+
+        float left = dRect.left + BORDER_WIDTH_PX;
+        float top = dRect.bottom - ALPHA_PANEL_HEIGHT + BORDER_WIDTH_PX;
+        float bottom = dRect.bottom - BORDER_WIDTH_PX;
         float right = dRect.right - BORDER_WIDTH_PX;
 
         mHueRect = new RectF(left, top, right, bottom);

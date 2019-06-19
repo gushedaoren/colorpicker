@@ -1,5 +1,7 @@
 package com.brstory.colorpicker;
 
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -143,7 +145,8 @@ public class BRColorPickerView extends View {
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_POINTER_UP:
                 moveType = 0;
-                setTranslationX(translationX);
+
+                startTrans();
                 return true;
         }
 
@@ -166,5 +169,42 @@ public class BRColorPickerView extends View {
         double delta_y = event.getY(0) - event.getY(1);
         double radians = Math.atan2(delta_y, delta_x);
         return (float) Math.toDegrees(radians);
+    }
+
+
+    private void startTrans(){
+        translationX=translationX;
+        int transLeft=0;int transRight=0;
+        if(translationX>0){
+            transRight= (int) -translationX;
+            transLeft=0;
+        }else{
+            transLeft= (int) translationX;
+            transRight=0;
+        }
+        ObjectAnimator transAnim = ObjectAnimator.ofFloat(this, "translationX", translationX);
+        transAnim.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animator) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animator) {
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animator) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animator) {
+
+            }
+        });
+        transAnim.setDuration(500);
+        transAnim.start();;
+
     }
 }

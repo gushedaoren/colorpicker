@@ -16,8 +16,10 @@
 
         <com.brstory.colorpicker.BRColorPickerView
 
-            android:layout_marginLeft="-5000dp"
-            android:layout_width="10000dp"
+
+            android:id="@+id/color_picker_view"
+            android:layout_marginLeft="-2500dp"
+            android:layout_width="5000dp"
             android:background="@drawable/repeat_palette"
             android:layout_height="90dp">
 

@@ -14,17 +14,31 @@
         android:layout_height="250dp">
 
 
-        <com.brstory.colorpicker.BRColorPickerView
+        <RelativeLayout
 
 
             android:id="@+id/color_picker_view"
-            android:layout_marginLeft="-2500dp"
-            android:layout_width="5000dp"
-            android:background="@drawable/repeat_palette"
-            android:layout_height="90dp">
+
+            android:layout_width="match_parent"
+
+            android:layout_height="120dp">
 
 
-        </com.brstory.colorpicker.BRColorPickerView>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"></LinearLayout>
+            <androidx.viewpager.widget.ViewPager
+
+                android:id="@+id/viewPager"
+                android:layout_width="match_parent"
+                android:layout_height="90dp">
+
+            </androidx.viewpager.widget.ViewPager>
+            
+
+
+        </RelativeLayout>
     </LinearLayout>
 
 

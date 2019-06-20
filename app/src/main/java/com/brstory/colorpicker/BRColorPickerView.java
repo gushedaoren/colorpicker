@@ -11,11 +11,18 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.viewpager.widget.ViewPager;
 
-public class BRColorPickerView extends View {
+public class BRColorPickerView extends RelativeLayout {
+
+    ViewPager viewPager;
+
+    Context context;
 
     // 属性变量
     private float translationX; // 移动X
@@ -36,10 +43,14 @@ public class BRColorPickerView extends View {
 
     public BRColorPickerView(Context context) {
         super(context);
+        this.context=context;
         initView();
     }
 
     private  void initView(){
+
+
+        initViewPager();
 
 
         setOnTouchListener(new OnTouchListener() {
@@ -50,9 +61,13 @@ public class BRColorPickerView extends View {
         });
 
 
+    }
 
+    private void initViewPager(){
+        viewPager=new ViewPager(context);
 
     }
+
 
 
 
@@ -60,17 +75,20 @@ public class BRColorPickerView extends View {
 
     public BRColorPickerView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+        this.context=context;
         initView();
     }
 
     public BRColorPickerView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        this.context=context;
         initView();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public BRColorPickerView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
+        this.context=context;
         initView();
     }
 
@@ -110,7 +128,7 @@ public class BRColorPickerView extends View {
                     int dX= (int) (currentX-actionX);
                     int dY= (int) (currentY-actionY);
                     if(Math.abs(dX)>Math.abs(dY)&&Math.abs(dX)>MIN_MOVE_SIZE){//左右滑动
-                        translationX = translationX + currentX - actionX;
+                        translationX = translationX + dX*3;
 
 
 
@@ -173,7 +191,12 @@ public class BRColorPickerView extends View {
 
 
     private void startTrans(){
-        translationX=translationX;
+
+        if(translationX>5000){
+            translationX=0;
+        }else if(translationX<-5000){
+            translationX=0;
+        }
         int transLeft=0;int transRight=0;
         if(translationX>0){
             transRight= (int) -translationX;
@@ -182,6 +205,8 @@ public class BRColorPickerView extends View {
             transLeft= (int) translationX;
             transRight=0;
         }
+
+
         ObjectAnimator transAnim = ObjectAnimator.ofFloat(this, "translationX", translationX);
         transAnim.addListener(new Animator.AnimatorListener() {
             @Override

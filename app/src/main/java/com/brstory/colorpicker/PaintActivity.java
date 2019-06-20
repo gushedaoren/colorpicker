@@ -27,26 +27,26 @@ public class PaintActivity extends AppCompatActivity {
         setContentView(R.layout.activity_paint);
 
 
-        viewPager=findViewById(R.id.viewPager);
-
-        LayoutInflater inflater=getLayoutInflater();
-        view1 =  inflater.inflate(R.layout.layout_palette_pannel, null);
-
-        view1.setBackgroundColor(Color.BLACK);
-
-        view2 = inflater.inflate(R.layout.layout_palette_pannel, null);
-        view2.setBackgroundColor(Color.YELLOW);
-
-        view3 = inflater.inflate(R.layout.layout_palette_pannel, null);;
-        view3.setBackgroundColor(Color.GRAY);
-
-
-        viewList = new ArrayList<View>();// 将要分页显示的View装入数组中
-        viewList.add(view1);
-        viewList.add(view2);
-        viewList.add(view3);
-
-        viewPager.setAdapter(pagerAdapter);
+//        viewPager=findViewById(R.id.viewPager);
+//
+//        LayoutInflater inflater=getLayoutInflater();
+//        view1 =  inflater.inflate(R.layout.layout_palette_pannel, null);
+//
+//        view1.setBackgroundColor(Color.BLACK);
+//
+//        view2 = inflater.inflate(R.layout.layout_palette_pannel, null);
+//        view2.setBackgroundColor(Color.YELLOW);
+//
+//        view3 = inflater.inflate(R.layout.layout_palette_pannel, null);;
+//        view3.setBackgroundColor(Color.GRAY);
+//
+//
+//        viewList = new ArrayList<View>();// 将要分页显示的View装入数组中
+//        viewList.add(view1);
+//        viewList.add(view2);
+//        viewList.add(view3);
+//
+//        viewPager.setAdapter(pagerAdapter);
 
 
 

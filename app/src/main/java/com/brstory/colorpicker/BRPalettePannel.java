@@ -3,6 +3,9 @@ package com.brstory.colorpicker;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -37,5 +40,32 @@ public class BRPalettePannel extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        int canvasWidth=canvas.getWidth();
+        Paint paint = new Paint();
+
+        //去锯齿
+
+        paint.setAntiAlias(true);
+
+
+        paint.setStyle(Paint.Style.FILL);
+
+        paint.setStrokeWidth(3);
+
+        int paletteWidth=canvasWidth/colors.length;
+
+        int canvasHeight= canvas.getHeight();
+
+        for(int i=0;i<colors.length;i++){
+
+            paint.setColor(  Color.parseColor(colors[i]));
+
+            RectF rectF = new RectF(i*paletteWidth,0,(i+1)*paletteWidth,canvasHeight);
+            canvas.drawRect(rectF,paint);
+
+
+
+        }
+
     }
 }

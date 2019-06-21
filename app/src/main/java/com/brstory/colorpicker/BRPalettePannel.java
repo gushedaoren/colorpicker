@@ -116,7 +116,7 @@ public class BRPalettePannel extends View {
 
         paletteHeight= canvasHeight*2/3;
 
-        outer_radius = canvasWidth*4/5;
+        outer_radius = canvasWidth*7/8;
         center = new Point(canvas.getWidth()/2, outer_radius);
         inner_radius = outer_radius-canvasWidth/6;
 
@@ -126,8 +126,31 @@ public class BRPalettePannel extends View {
 
         drawCircle();
 
+        drawSmallCircles();
 
 
+
+
+    }
+
+    private void drawSmallCircles(){
+        float currentAdius = (outer_radius+inner_radius)/2;
+
+        int radius = (outer_radius-inner_radius)/3;
+
+
+        float[] radians={(float) Math.toRadians(240),(float) Math.toRadians(252),(float) Math.toRadians(264),(float) Math.toRadians(276),(float) Math.toRadians(288),(float) Math.toRadians(300)};
+
+        for(int i=0;i<radians.length;i++){
+            float radian = radians[i];
+
+            float x = (float) (center.x + Math.cos(radian)*currentAdius);
+            float y = (float) (center.y + Math.sin(radian)*currentAdius);
+
+            paint.setColor(Color.YELLOW);
+
+            canvas.drawCircle(x,y,radius,paint);
+        }
 
     }
 

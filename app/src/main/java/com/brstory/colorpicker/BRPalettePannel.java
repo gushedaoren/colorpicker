@@ -4,9 +4,14 @@ import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.Point;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -21,6 +26,17 @@ public class BRPalettePannel extends View {
 
     public int degree = 0;
     Context context;
+    Point center;
+
+    int canvasWidth;
+    int canvasHeight;
+    Canvas canvas;
+    Paint paint;
+
+    int paletteWidth;
+
+    int outer_radius;
+    int inner_radius;
 
     // 属性变量
     private float translationX; // 移动X
@@ -35,9 +51,19 @@ public class BRPalettePannel extends View {
     private float actionY;
     private float spacing;
 
+    int paletteHeight;
+
+    int topPalettePosition=0;
     private int moveType; // 0=未选择，1=拖动，2=缩放
 
     String[] colors = {"#FFFFF0","#FF7F24","#FF1493","#EEE9E9","#EE7600","#EE0000","#A8A8A8","#97FFFF","#8B2500"};
+
+
+    Bitmap orignalBitmap;
+    private void initPalette(){
+
+
+    }
 
     public BRPalettePannel(Context context) {
         super(context);
@@ -63,8 +89,10 @@ public class BRPalettePannel extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        int canvasWidth=canvas.getWidth();
-        Paint paint = new Paint();
+        this.canvas=canvas;
+        canvasWidth=canvas.getWidth();
+        canvasHeight=canvas.getHeight();
+        paint = new Paint();
 
         if(translationX>canvasWidth){
             translationX=translationX-canvasWidth;
@@ -82,10 +110,28 @@ public class BRPalettePannel extends View {
 
         paint.setStrokeWidth(3);
 
-        int paletteWidth=canvasWidth/colors.length;
+        paletteWidth=canvasWidth/colors.length;
 
-        int canvasHeight= canvas.getHeight();
 
+
+        paletteHeight= canvasHeight*2/3;
+
+        outer_radius = canvasWidth*4/5;
+        center = new Point(canvas.getWidth()/2, outer_radius);
+        inner_radius = outer_radius-canvasWidth/6;
+
+        topPalettePosition=outer_radius-inner_radius;
+
+        drawPalette();
+
+        drawCircle();
+
+
+
+
+    }
+
+    private void drawPalette(){
         for(int i=0;i<colors.length;i++){
 
             paint.setColor(  Color.parseColor(colors[i]));
@@ -93,9 +139,9 @@ public class BRPalettePannel extends View {
             int left= (int) (i*paletteWidth+translationX);
             int right= (int) ((i+1)*paletteWidth+translationX);
 
-            RectF rectF = new RectF(left,0,right,canvasHeight);
-            RectF rectLeft = new RectF(left-canvasWidth,0,right-canvasWidth,canvasHeight);
-            RectF rectRight = new RectF(left+canvasWidth,0,right+canvasWidth,canvasHeight);
+            RectF rectF = new RectF(left,topPalettePosition,right,canvasHeight);
+            RectF rectLeft = new RectF(left-canvasWidth,topPalettePosition,right-canvasWidth,canvasHeight);
+            RectF rectRight = new RectF(left+canvasWidth,topPalettePosition,right+canvasWidth,canvasHeight);
 
             canvas.drawRect(rectF,paint);
             canvas.drawRect(rectLeft,paint);
@@ -105,7 +151,39 @@ public class BRPalettePannel extends View {
 
         }
 
+
     }
+
+    private void drawCircle(){
+
+
+
+        int arc_sweep = 180;
+        int arc_ofset = 180;
+
+        RectF outer_rect = new RectF(center.x-outer_radius, center.y-outer_radius, center.x+outer_radius, center.y+outer_radius);
+        RectF inner_rect = new RectF(center.x-inner_radius, center.y-inner_radius, center.x+inner_radius, center.y+inner_radius);
+
+        Path path = new Path();
+        path.arcTo(outer_rect, arc_ofset, arc_sweep);
+        path.arcTo(inner_rect, arc_ofset + arc_sweep, -arc_sweep);
+        path.close();
+
+        Paint fill = new Paint();
+        fill.setColor(Color.GREEN);
+        canvas.drawPath(path, fill);
+
+        Paint border = new Paint();
+        border.setStyle(Paint.Style.STROKE);
+        border.setStrokeWidth(2);
+        canvas.drawPath(path, border);
+
+
+
+    }
+
+
+
 
 
     @Override
@@ -195,5 +273,40 @@ public class BRPalettePannel extends View {
     public void setDegree(int degree) {
         this.degree = degree;
         postInvalidate();
+    }
+
+    /**
+     * 将bitmap中的某种颜色值替换成新的颜色
+     * @param bitmap
+     * @param oldColor
+     * @param newColor
+     * @return
+     */
+    public static Bitmap replaceBitmapColor(Bitmap oldBitmap, int oldColor, int newColor)
+    {
+        //相关说明可参考 http://xys289187120.blog.51cto.com/3361352/657590/
+        Bitmap mBitmap = oldBitmap.copy(Bitmap.Config.ARGB_8888, true);
+        //循环获得bitmap所有像素点
+        int mBitmapWidth = mBitmap.getWidth();
+        int mBitmapHeight = mBitmap.getHeight();
+        int mArrayColorLengh = mBitmapWidth * mBitmapHeight;
+        int[] mArrayColor = new int[mArrayColorLengh];
+        int count = 0;
+        for (int i = 0; i < mBitmapHeight; i++) {
+            for (int j = 0; j < mBitmapWidth; j++) {
+                //获得Bitmap 图片中每一个点的color颜色值
+                //将需要填充的颜色值如果不是
+                //在这说明一下 如果color 是全透明 或者全黑 返回值为 0
+                //getPixel()不带透明通道 getPixel32()才带透明部分 所以全透明是0x00000000
+                //而不透明黑色是0xFF000000 如果不计算透明部分就都是0了
+                int color = mBitmap.getPixel(j, i);
+                //将颜色值存在一个数组中 方便后面修改
+                if (color == oldColor) {
+                    mBitmap.setPixel(j, i, newColor);  //将白色替换成透明色
+                }
+
+            }
+        }
+        return mBitmap;
     }
 }
